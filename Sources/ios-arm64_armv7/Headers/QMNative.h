@@ -257,18 +257,25 @@ typedef NS_OPTIONS(NSUInteger, QMEventTypeFlag) {
  */
 +(void)maskTextInView:(UIView*)view;
 /**
- Marks all views of a certain class as private, we don't want the personal data in that view, or any subviews, to leave the device. Similar to above. An example call might look like [QMNative maskView:[QMAwesomeView class]];
+ Marks all views of a certain class as private, we don't want the personal data in that view, or any subviews, to leave the device. Similar to above. An example call might look like [QMNative maskViewClass:[QMAwesomeView class]];
  
  @param viewClass The view class to be masked. It's important to note that this method should be called before any views of this class are added to the visible view hierarchy. A suitable place to call this might be right afer the QMNative init method in your App Delegate.
  */
 +(void)maskViewClass:(Class)viewClass;
 
 /**
- Marks a view as needing encryption. Note this is a static method, so call [QMNative maskView:yourCoolView];
+ Marks a view as needing encryption. Note this is a static method, so call [QMNative encryptView:yourCoolView];
  
  @param view The view to be encrypted. It's important to note that this method should be called before the view is added to the visible view hierarchy, otherwise the information in that view will have already been captured.
  */
 +(void)encryptView:(UIView*)view;
+
+/**
+ Marks a view as not needing to be masked. Note this is a static method, so call [QMNative unmaskView:yourCoolView];
+ 
+ @param view The view to be unmasked. If this view has yet to be masked, this will do nothing. If the view has already been masked, it and its subviews will no longer be masked. This is primarily useful when your subscription is using the "mask everything" configuration, as this allows you to target this view as safe.
+ */
++(void)unmaskView:(UIView*)view;
 
 /**
  Returns this version of the QMNative library
@@ -294,20 +301,20 @@ typedef NS_OPTIONS(NSUInteger, QMEventTypeFlag) {
 /**
 Pauses Quantum Metric session recording, if it's already been started. This is useful if you want to not capture a certain part of your app, and want to be able to start capture again on the same session.
 */
--(void)pauseSession;
++(void)pauseSession;
 /**
  This method is being deprecated, please use the method above.
  */
-+(void)pauseSession DEPRECATED_MSG_ATTRIBUTE("Quantum Metric is deprecating the use of instance methods, use QMNative.pauseSession() or [QMNative pauseSession] instead.");
+-(void)pauseSession DEPRECATED_MSG_ATTRIBUTE("Quantum Metric is deprecating the use of instance methods, use QMNative.pauseSession() or [QMNative pauseSession] instead.");
 
 /**
 Stops capture and ends the session. To start capture again, you must start a new session using -newSession:
 */
--(void)endSession;
++(void)endSession;
 /**
  This method is being deprecated, please use the method above.
  */
-+(void)endSession DEPRECATED_MSG_ATTRIBUTE("Quantum Metric is deprecating the use of instance methods, use QMNative.endSession() or [QMNative endSession] instead.");
+-(void)endSession DEPRECATED_MSG_ATTRIBUTE("Quantum Metric is deprecating the use of instance methods, use QMNative.endSession() or [QMNative endSession] instead.");
 
 /**
  Restarts Quantum Metric session recording, if it's been stopped, with the same session
