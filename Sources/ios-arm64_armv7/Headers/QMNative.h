@@ -179,6 +179,13 @@ typedef NS_OPTIONS(NSUInteger, QMEventTypeFlag) {
 /**
  Ties passed in user information to this session.
  
+ @param login Login for the user. This can be the user's email address, username, a user id, or whatever you use as your generic user identifier.
+ */
++(void)setUserLogin:(NSString*)login;
+
+/**
+ Ties passed in user information to this session.
+ 
  @param firstName First Name of the user
  */
 +(void)setUserFirstName:(NSString*)firstName;
