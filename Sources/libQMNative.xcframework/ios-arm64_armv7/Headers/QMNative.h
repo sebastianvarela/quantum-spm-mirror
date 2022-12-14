@@ -438,4 +438,11 @@ By default, the SDK determines where "pages" are in your application, normally b
  Returns the Quantum Metric replay URL of the current session.
  */
 -(NSString *)getCurrentReplayURL DEPRECATED_MSG_ATTRIBUTE("Quantum Metric is deprecating the use of instance methods, use QMNative.getCurrentReplayURL() or [QMNative getCurrentReplayURL] instead.");
+
+/**
+ Override the WebView instrumentation URL depending on a runtime criteria.
+ */
++(void)setWebViewInstrumentationURL:(NSString*)instrumentationURL;
+
+
 @end
