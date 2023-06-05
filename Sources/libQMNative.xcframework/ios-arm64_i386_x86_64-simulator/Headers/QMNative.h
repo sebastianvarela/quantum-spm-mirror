@@ -444,5 +444,35 @@ By default, the SDK determines where "pages" are in your application, normally b
  */
 +(void)setWebViewInstrumentationURL:(NSString*)instrumentationURL;
 
+/**
+ Return a bool indicating whether the SDK has already been initialized
+ */
++(BOOL)hasBeenInitialized;
+
+/**
+ Return a bool indicating whether the SDK is currently running and capturing data. Note that this might be false even after initialization, in cases where the session has been manually stopped or paused, or if we have failed a sampling check. You must only call this after the SDK has been initialized using initializeWithSubscription:uid:
+ */
++(BOOL)isCurrentlyRunning;
+
+/**
+ Call this method to immediately enter an offline testing mode. This method will return a filepath. After this method is called, we will begin saving uncompressed replay data at the provided filepath, rather than sending data to the subscription. Please note that you will NOT see a replay in your subscription when this method is called. The data in the file will be NSData composed of a UTF8-encoded string. This mode is primarily intended for testing purposes. The data saved at the provided filePath will be updated every time a new screen appears in the app, and you MUST visit at least one new screen before data will exist at the filePath.
+ 
+ Data in the file will be structured as a dictionary with the following format:
+ {
+   "<page timestamp>": {
+     "requests": [
+       {
+         "type": "<request type>",
+         "url": "<request url>",
+         "data": "<request body>"
+       },
+       {
+         ...
+       }
+     ]
+   }
+ }
+ */
++ (NSString *)enableOfflineTestingMode;
 
 @end
