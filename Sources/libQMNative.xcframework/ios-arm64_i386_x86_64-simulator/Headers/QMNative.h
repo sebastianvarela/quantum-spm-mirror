@@ -99,6 +99,22 @@ typedef NS_OPTIONS(NSUInteger, QMEventTypeFlag) {
 };
 
 /**
+ These enum defines different content types that can be masked via the QMNative API method +[QMNative maskContentOfType:matchingOptions:]
+ 
+ Refer to the +[QMNative maskContentOfType:matchingOptions:] for details on using this method.
+ 
+ This enum may expand in the future!
+ */
+typedef NS_ENUM(NSInteger, QMContentType) {
+    /// This content type refers to headers captured in network requests and responses
+    QMContentTypeNetworkHeaders,
+    /// This content type refers to bodies captured in network requests and responses
+    QMContentTypeNetworkBodies,
+    /// This content type refers to any UI text captured
+    QMContentTypeText
+};
+
+/**
  * The entry point of the Quantum Metric Native SDK.
  *
  * To get started, import the header file, and call `[QMNative initializeWithSubscription:@"yoursubscription" uid:@"youruid"];`. This method should always be called first. If you're not sure what your subscription name or UID are, contact us.
@@ -474,5 +490,42 @@ By default, the SDK determines where "pages" are in your application, normally b
  }
  */
 + (NSString *)enableOfflineTestingMode;
+
+/**
+ This method can be used to specify rules for masking a particular content type.
+ 
+ @param contentType Specifies the content type to be masked. Refer to the QMContentType enum for details on what each type represents.
+ 
+ @param options Specifies a dictionary of options to mask the specified QMContentType. These options may expand in the future, but currently the only supported option is `regex_strings`: <an array of regex strings>
+ 
+ When this method is called, the masking options will be applied to the specified QMContentType, and will supersede and take precedence over remote configuration.
+ 
+ An example use case of this is that you wish to mask all text containing 16 digits, like a credit card might have (a simplistic example). You would call -
+ 
+ Swift
+
+ QMNative.maskContent(ofType: .text, matching: ["regex_strings": ["[0-9]{16}"]])
+ 
+ Objective-C
+ 
+ [QMNative maskContentOfType:QMContentTypeText matching:@{ @"regex_strings": @[ @"[0-9]{16}" ] }];
+ */
++ (void)maskContentOfType:(QMContentType)contentType matching:(NSDictionary *)options NS_SWIFT_NAME(maskContent(ofType:matching:));
+
+/**
+ This method can be used to specify which network requests we will capture, according to the array of regex strings passed in. We will only capture requests whose URLs match one of the strings in this array.
+ 
+ @param urlRegexes The array of regex strings against which request URLs will be matched
+ 
+ If this method is used, this will supersede and replace the corresponding remote configuration.
+ */
++ (void)setAPICaptureURLRegex:(NSArray *)urlRegexes;
+
+/**
+ This method can be used to enable "mask everything" mode. This will mask all text by default. Text can be unmasked via other configuration options.
+ 
+ If this method is used, this will ignore the corresponding remote configuration.
+ */
++ (void)enableMaskEverythingMode;
 
 @end
