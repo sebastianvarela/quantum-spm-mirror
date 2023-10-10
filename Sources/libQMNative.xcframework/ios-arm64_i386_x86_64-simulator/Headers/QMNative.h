@@ -111,7 +111,26 @@ typedef NS_ENUM(NSInteger, QMContentType) {
     /// This content type refers to bodies captured in network requests and responses
     QMContentTypeNetworkBodies,
     /// This content type refers to any UI text captured
-    QMContentTypeText
+    QMContentTypeText,
+    /// This content type refers to any input fields
+    QMContentTypeInputs,
+    /// This content type refers to any images
+    QMContentTypeImages,
+    /// This content type refers to any View Controller class
+    QMContentTypeViewControllerClass,
+    /// This content type refers to any UIView class
+    QMContentTypeViewClass
+};
+
+typedef NS_ENUM(NSInteger, QMCurrentState) {
+    /// This state means the SDK has not yet been initialized. You should call `initializeWithSubscription:uid:` to begin using the SDK
+    QMCurrentStateUninitialized,
+    /// This state means the SDK has been stopped. If you want to resume capture, you'll need to start a new session by calling `newSession:`
+    QMCurrentStateStopped,
+    /// This state means capture has been paused. If you want to resume capture, you'll need to call `restartQM`
+    QMCurrentStatePaused,
+    /// This state means that capture is actively running
+    QMCurrentStateRunning
 };
 
 /**
@@ -394,6 +413,13 @@ Stops capture and ends the session. To start capture again, you must start a new
 -(void)gotSessionCookieCallback:(void (^)(NSString *sessionCookie, NSString *userString))callback DEPRECATED_MSG_ATTRIBUTE("Quantum Metric is deprecating the use of instance methods, use QMNative.gotSessionCookieCallback() or [QMNative gotSessionCookieCallback:] instead.");
 
 /**
+ Use this method to add a callback listener for any critical errors that occur within the SDK. These errors may include things like failing a sample and deciding not to run, being unable to access essential endpoints, etc.
+ 
+ @param callback This callback will be called whenever we run into an error that causes us to cease operating for whatever reason.
+ */
++(void)gotCriticalErrorCallback:(void (^)(NSString *reason))callback;
+
+/**
  By default, your app's name will be used as the browser name in Quantum Metric. If you'd like to customize this, to more easily keep track of variations of an app (i.e. add "production", "dev", "beta") you can do that here. This must be called directly after initializeWithSubscription:uid:
  */
 +(void)setBrowserString:(NSString*)browserString;
@@ -496,7 +522,12 @@ By default, the SDK determines where "pages" are in your application, normally b
  
  @param contentType Specifies the content type to be masked. Refer to the QMContentType enum for details on what each type represents.
  
- @param options Specifies a dictionary of options to mask the specified QMContentType. These options may expand in the future, but currently the only supported option is `regex_strings`: <an array of regex strings>
+ @param options Specifies a dictionary of options to mask the specified QMContentType. These options may expand in the future. Currently the supported options keys are -
+ 
+ "regex_strings": <an array of regex strings>,
+ "exact_matches": <an array of exact match strings>
+ 
+ Though note that these options aren't appropriate for every content type.
  
  When this method is called, the masking options will be applied to the specified QMContentType, and will supersede and take precedence over remote configuration.
  
@@ -509,6 +540,44 @@ By default, the SDK determines where "pages" are in your application, normally b
  Objective-C
  
  [QMNative maskContentOfType:QMContentTypeText matching:@{ @"regex_strings": @[ @"[0-9]{16}" ] }];
+ 
+ The following is a list of example usage of each QMContentType, and the options expected
+ 
+ - QMContentTypeText:
+    Expected option:
+        "regex_strings": <array of regex strings>
+    Will mask all text matching any of the regex strings provided
+ 
+ - QMContentTypeInputs:
+    Expected option:
+        none
+    Will mask all input fields
+ 
+ - QMContentTypeImages:
+    Expected option:
+        none
+    Will mask all images
+ 
+ - QMContentTypeNetworkHeaders:
+    Expected option:
+        "regex_strings": <array of regex strings>
+    Will exclude the captured headers in any api request/response which match any of the provided regex strings
+ 
+ - QMContentTypeNetworkBodies
+    Expected option:
+        "regex_strings": <array of regex strings>
+    Will ask the captured body in any api request/response which match any of the provided regex strings
+ 
+ - QMContentTypeViewControllerClass
+    Expected options:
+        "regex_strings": <array of regex strings>
+ and/or "exact_matches": <array of exact match strings>
+    Will mask any UIViewController class which matches any of the provided regex or exact match strings
+ 
+ - QMContentTypeViewClass
+    Expected option:
+        "exact_matches": <array of exact match strings>
+    Will mask any instance of a UIView subclass which matches any of the provided exact match strings
  */
 + (void)maskContentOfType:(QMContentType)contentType matching:(NSDictionary *)options NS_SWIFT_NAME(maskContent(ofType:matching:));
 
@@ -527,5 +596,28 @@ By default, the SDK determines where "pages" are in your application, normally b
  If this method is used, this will ignore the corresponding remote configuration.
  */
 + (void)enableMaskEverythingMode;
+
+/**
+ This method can be used to enable or disable webview injection.
+ 
+ @param enabled A flag indicating whether webview injection should be enabled. If false, it will disable webview injection entirely. If true, it will use the provided array of URL strings (matched by regex) to decide which webviews to inject into
+ 
+ @param urls An array of strings. If enabled, for any webview we encounter, we'll match its URL via regex against this array of strings. If there is any match, we'll inject into the webview.
+ */
++ (void)enableWebviewInjection:(BOOL)enabled matchingURLs:(NSArray *)urls;
+
+/**
+ This method can be used to enable or disable replay data.
+
+ @param enabled A flag indicating whether replay data should be captured. If disabled, the SDK will continue to capture analytics data (events, interactions, etc.), but will not capture any session replay data. If enabled, the SDK will capture everything as normal.
+ */
++ (void)enableReplay:(BOOL)enabled;
+
+/**
+ This method can be used to determine the current running state of the SDK
+ 
+ @return Returns a QMCurrentState enum case describing whether the SDK is uninitialized, stopped, paused, or running.
+ */
++ (QMCurrentState)getCurrentState;
 
 @end
