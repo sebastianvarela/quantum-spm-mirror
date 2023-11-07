@@ -9,7 +9,7 @@
 
 
 #import <Foundation/Foundation.h>
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 
 /**
@@ -619,12 +619,5 @@ By default, the SDK determines where "pages" are in your application, normally b
  @return Returns a QMCurrentState enum case describing whether the SDK is uninitialized, stopped, paused, or running.
  */
 + (QMCurrentState)getCurrentState;
-
-/**
- This method can be used to set the inactivity timeout duration, in seconds. The default value for this duration is 1800 seconds (or 30 minutes), meaning that if the user has the app backgrounded for 30 minutes, then foregrounds the app again, we will automatically begin a new session. The maximum value for the timeout is 1800 seconds (30 minutes), and the minimum value is 0 seconds.
- 
- @param timeout An NSTimeInterval representing the inactivity timeout duration, in seconds.
- */
-+ (void)setInactivityTimeout:(NSTimeInterval)timeout;
 
 @end
