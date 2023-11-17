@@ -620,4 +620,11 @@ By default, the SDK determines where "pages" are in your application, normally b
  */
 + (QMCurrentState)getCurrentState;
 
+/**
+ This method can be used to specify items that should be scrubbed in our web instrumentation. This will apply to any webview we determine we should inject into.
+ 
+ Please consult your QM team for information on using this method.
+ */
++ (void)setWebviewScrubList:(NSArray *)scrubList;
+
 @end
