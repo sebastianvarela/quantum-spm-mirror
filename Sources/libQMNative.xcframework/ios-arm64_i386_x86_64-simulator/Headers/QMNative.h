@@ -482,6 +482,11 @@ By default, the SDK determines where "pages" are in your application, normally b
 -(NSString *)getCurrentReplayURL DEPRECATED_MSG_ATTRIBUTE("Quantum Metric is deprecating the use of instance methods, use QMNative.getCurrentReplayURL() or [QMNative getCurrentReplayURL] instead.");
 
 /**
+ Override the URL from which the SDK will fetch iOS configuration. This should be called immediately after calling `initializeWithSubscription:uid:`
+ */
++(void)setCustomConfigURL:(NSString *)url;
+
+/**
  Override the WebView instrumentation URL depending on a runtime criteria.
  */
 +(void)setWebViewInstrumentationURL:(NSString*)instrumentationURL;
@@ -621,17 +626,10 @@ By default, the SDK determines where "pages" are in your application, normally b
 + (QMCurrentState)getCurrentState;
 
 /**
- This method can be used to specify items that should be scrubbed in our web instrumentation. This will apply to any webview we determine we should inject into.
+ This method can be used to specify webview capture that should be scrubbed.
  
  Please consult your QM team for information on using this method.
  */
-+ (void)setWebviewScrubList:(NSArray *)scrubList;
-
-/**
- This method can be used to specify text nodes that should be scrubbed in our web instrumentation. This will apply to any webview we determine we should inject into.
- 
- Please consult your QM team for information on using this method.
- */
-+ (void)setWebviewTextNodeScrubList:(NSArray *)scrubList;
++ (void)setWebviewScrubList:(NSDictionary *)scrubList;
 
 @end
