@@ -200,6 +200,27 @@ typedef NS_ENUM(NSInteger, QMCurrentState) {
 -(void)sendEventWithID:(NSInteger)eventID value:(NSString*)value flags:(QMEventTypeFlag)flags DEPRECATED_MSG_ATTRIBUTE("Quantum Metric is deprecating the use of instance methods, use QMNative.sendEvent(withID:, value:, flags:) or [QMNative sendEventWithID:value:flags:] instead.");
 
 /**
+ Send an event, with an extended value
+ 
+ @param eventID The ID of the event to be logged to the server
+ @param value The value of the event to be logged to the server
+ @param json Array or dictionary of extended values
+ 
+ This is the same as calling the below method with flags:0
+ */
++(void)sendEventWithID:(NSInteger)eventID value:(NSString*)value json:(id)extendedValue;
+
+/**
+ Send an event, with an extended value
+ 
+ @param eventID The ID of the event to be logged to the server
+ @param value The value of the event to be logged to the server
+ @param json Array or dictionary of extended values
+ @param flags The flags for the event to be logged. Only used for special occasions.
+ */
++(void)sendEventWithID:(NSInteger)eventID value:(NSString*)value json:(id)extendedValue flags:(QMEventTypeFlag)flags;
+
+/**
  Send an error
  
  @param errorID The ID of the error to be logged to the server
