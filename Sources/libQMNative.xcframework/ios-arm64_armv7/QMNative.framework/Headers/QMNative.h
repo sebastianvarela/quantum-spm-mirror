@@ -674,4 +674,11 @@ By default, the SDK determines where "pages" are in your application, normally b
  */
 + (void)addCertificateKey:(NSString *)key;
 
+/**
+ This method can be used to manually specify the "Pause Capture Outside of View Controllers". When this method is used, we'll automatically pause capture outside of the provided page names. If the first page we encounter after we're initialized is not in the list, we will delay starting a session until we reach an allowed page.
+ 
+ @param pageNames An array of regex-matched page names. Whenever the app user reaches one of these pages, we'll automatically resume capture. Whenever the user reaches a page not matched in this list, we'll automatically pause capture.
+ */
++ (void)setCapturedPageNames:(NSArray *)pageNames;
+
 @end
