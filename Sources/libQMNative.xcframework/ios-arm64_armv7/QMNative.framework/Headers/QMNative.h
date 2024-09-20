@@ -681,4 +681,11 @@ By default, the SDK determines where "pages" are in your application, normally b
  */
 + (void)setCapturedPageNames:(NSArray *)pageNames;
 
+/**
+ This method can be used to set a handler for "Pause Capture Outside of View Controllers" log. When we encounter a new page, the name of the view controller will be passed into this handler. Based on the result of the handler, we will decide to pause or resume capture of this page. If you use this method, note that `setCapturedPageNames:` will no longer do anything.
+ 
+ @param handler A block, into which will be passed the view controller name when a new page is detected. The block should return true or false, where true indicates the page should be captured, and false indicates the page should not be captured.
+ */
++ (void)setCapturedPageNameHandler:(BOOL (^)(NSString *pageName))handler;
+
 @end
